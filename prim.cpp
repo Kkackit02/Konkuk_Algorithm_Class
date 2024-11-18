@@ -64,7 +64,7 @@ TRI PQ::Delete()
 		if (i * 2 > n)
 		{
 			break;
-		}
+		} 
 		else if (i * 2 + 1 > n) // left Child Only Exists
 		{
 			if (Arr[i * 2].w < Arr[i].w)
@@ -118,26 +118,75 @@ TRI PQ::Delete()
 
 
 PQ Q;
+
+int n , m;
+vector<pair<int,int>> Edges[1000];
+int M[1000];
+
 int main()
 {
-	
-	TRI s[100] = {
-		{1,2,3},
-		{4,5,6},
-		{2,2,4},
-		{4,2,1},
-		{4,2,2},
-		{4,6,8}
-	};
+	int c, i , a, b, w;
+	TRI x,y;
 
-	TRI t;
-	Q.Insert(s[0]);
-	Q.Insert(s[1]);
-	Q.Insert(s[2]);
-	Q.Insert(s[3]);
-	Q.Insert(s[4]);
-	Q.Insert(s[5]);
-	t=Q.Delete();
-	printf("Delete (%d %d %d)\n" , t.a, t.b, t.w);
+	scanf("%d %d", &n, &m);
+	for(i = 0; i < m; i++)
+	{
+		scanf("%d %d %d" , &a, &b, &w);
+		Edges[a].push_back(make_pair(b,w));
+		Edges[b].push_back(make_pair(a,w));
+	}
+	c = 1;//current node
+	M[c] = 1;
+	for(i= 0; i<Edges[c].size(); i++)
+	{
+		x.a = c;
+		x.b = Edges[c][i].first;
+		x.w = Edges[c][i].second;
+		Q.Insert(x);
+	}
+	while(Q.isEmpty() == 0)
+	{
+		y = Q.Delete();
+		if(M[y.a] == 1 && M[y.b] == 1)
+		{
+			//a는 항상 1
+			//싸이클이 만들어져서 버리는것
+			continue;
+		}
+		else
+		{
+			printf("Edge from Node %d to Node %d of Weight %d Selected\n" , y.a, y.b, y.w);
+
+			c = y.b;
+			M[c] = 1;
+			for(i= 0; i<Edges[c].size(); i++)
+			{
+				x.a = c;
+				x.b = Edges[c][i].first;
+				x.w = Edges[c][i].second;
+				Q.Insert(x);
+			}
+		}
+	}
+
 	return 0;
 }
+
+
+/* 
+3 3
+1 2 1
+2 3 4
+1 3 2
+
+
+3 7
+1 2 1
+2 3 4
+1 3 2
+1 2 7
+4 5 2
+4 5 1
+4 5 3
+
+*/
