@@ -11,12 +11,15 @@ int main()
 
     cin >> N >> Q;
     vector<int> players(N);
+    vector<int> originPlayers(N);
     for (int i = 0; i < N; ++i)
     {
         cin >> players[i];
     }
+    originPlayers = players;
     for (int q = 0; q < Q; q++)
     {
+        players = originPlayers;
         int k, newPlayer;
         cin >> k >> newPlayer;
         players.push_back(newPlayer);
@@ -24,15 +27,22 @@ int main()
         result.resize(N + 1);
 
         sort(players.begin(), players.end());
+
         result[0].push_back(1);
         result[0].push_back(2);
         result[1].push_back(0);
         result[2].push_back(0);
+        if(N+1 >= 3)
+        {
+            result[N].push_back(N - 1);
+            result[N].push_back(N - 2);
+            result[N - 1].push_back(N);
+            result[N - 2].push_back(N);
+        }
+        
+       
 
-        result[N].push_back(N - 1);
-        result[N].push_back(N - 2);
-        result[N - 1].push_back(N);
-        result[N - 2].push_back(N);
+
         for (int i = 0; i < N + 1; i++)
         {
             vector<int> neighbors;
@@ -53,9 +63,9 @@ int main()
 
                      if (diffA != diffB)
                      {
-                         return diffA < diffB; // Â÷ÀÌ°¡ ÀÛÀº °ª ¿ì¼±
+                         return diffA < diffB; // ï¿½ï¿½ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ì¼±
                      }
-                     return result[a].size() < result[b].size(); // result size ÀÛÀº °ª ¿ì¼±
+                     return result[a].size() < result[b].size(); // result size ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ì¼±
                  });
 
             int idx = 0;
@@ -80,7 +90,7 @@ int main()
                 idx++;
             }
         }
-        int resultValue = 0;
+        long long resultValue = 0;
         for (int i = 0; i < N + 1; i++)
         {
 
@@ -91,16 +101,14 @@ int main()
                 resultValue += abs(players[i] - players[result[i][0]]);
                 resultValue += abs(players[i] - players[result[i][1]]);
 
-                // printf("%d¹ø¤Š ³ëµå´Â 1¹ø %d¿Í %dÀÇ Àý´ëÂ÷ÀÎ %d¸¦ ´õÇÕ´Ï´Ù.\n" , i, players[i] , players[result[i][0]] , abs(players[i]-players[result[i][0]]));
-                // printf("%d¹ø¤Š ³ëµå´Â 2¹ø %d¿Í %dÀÇ Àý´ëÂ÷ÀÎ %d¸¦ ´õÇÕ´Ï´Ù.\n\n" , i, players[i] , players[result[i][1]] , abs(players[i]-players[result[i][1]]));
+                //printf("%dï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½ %dï¿½ï¿½ %dï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ %dï¿½ï¿½ ï¿½ï¿½ï¿½Õ´Ï´ï¿½.\n" , i, players[i] , players[result[i][0]] , abs(players[i]-players[result[i][0]]));
+                //printf("%dï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 2ï¿½ï¿½ %dï¿½ï¿½ %dï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ %dï¿½ï¿½ ï¿½ï¿½ï¿½Õ´Ï´ï¿½.\n\n" , i, players[i] , players[result[i][1]] , abs(players[i]-players[result[i][1]]));
             }
         }
-        ResultVector.push_back(resultValue/2);
+
+        printf("%lld\n", resultValue / 2);
+        //ResultVector.push_back(resultValue / 2);
         players.pop_back();
     }
 
-    for(int i = 0; i < ResultVector.size(); i++)
-    {
-        printf("%d\n" , ResultVector[i]);
-    }
 }

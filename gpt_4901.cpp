@@ -1,130 +1,52 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <climits>
 using namespace std;
 
-vector<int> result[100000];
-int degree[100000];
+long long calculateMinImbalance(const vector<int>& players) {
+    int N = players.size();
+    vector<long long> DP(N + 1, LLONG_MAX);
 
-vector<int> players(100000); // 선수 실력 저장
+    // 초기 조건
+    DP[0] = 0;
 
-
-void connectNode(int currentNode, int N)
-{
-    
-        cout<<"1";
-    if (degree[currentNode] == 2)
-        return;
-    int minV = 999999999;
-    int minIdx = -1;
-    for (int k = 0; k < N; k++)
-    {
-        if (currentNode == k)
-        {
-            cout<<"currentNode :"<<currentNode<<"K : "<<k<<endl;
-            continue;
-        }
-
-        if(result[currentNode][0] == k)
-        {
-            cout<<"result[currentNode][0] :"<<result[currentNode][0]<<"K : "<<k<<endl;
-            continue;
-        }
-
-
-        printf("%d vs %d\n", abs(players[currentNode] - players[k]), minV);
-        if (abs(players[currentNode] - players[k]) < minV)
-        {
-            minV = abs(players[currentNode] - players[k]);
-            minIdx = k;
+    // DP 계산
+    for (int i = 3; i <= N; i++) {
+        for (int j = 3; j <= 5 && i - j >= 0; ++j) {
+            DP[i] = min(DP[i], DP[i - j] + 2 * (players[i - 1] - players[i - j]));
         }
     }
 
-    printf("check %d node , min data is %d, idx is %d\n", currentNode, minV, minIdx);
-    if (degree[minIdx] == 2)
-    {
-        if (players[result[currentNode][0]] > minV && players[result[currentNode][1]] > minV)
-        {
-            if (players[result[currentNode][0]] > players[result[currentNode][1]])
-            {
-                result[currentNode][0] = minIdx;
-                result[currentNode].push_back(minIdx);
-            }
-            else
-            {
-                result[currentNode][1] = minIdx;
-                result[currentNode].push_back(minIdx);
-            }
-        }
-        else
-        {
-
-        }
-    }
-    else
-    {
-        result[currentNode].push_back(minIdx);
-        result[minIdx].push_back(currentNode);
-    }
-    cout<<"2";
-    connectNode(minIdx, N);
+    return DP[N];
 }
 
-
-int main()
-{
+int main() {
     int N, Q;
-    cin >> N >> Q; // N: 선수 수, Q: 훈련 프로그램 횟수
+    cin >> N >> Q;
 
-
-    // 초기 선수 실력 입력
-    for (int i = 0; i < N; ++i)
-    {
+    vector<int> players(N);
+    for (int i = 0; i < N; ++i) {
         cin >> players[i];
     }
 
-    // Q번의 훈련 프로그램 실행
-    for (int i = 0; i < Q; ++i)
-    {
-        int k;
-        cin >> k; // 초청 선수 수 (항상 1로 가정)
+    // 정렬
+    sort(players.begin(), players.end());
 
-        vector<int> newPlayers(k);
-        for (int j = 0; j < k; ++j)
-        {
-            cin >> newPlayers[j];             // 초청 선수 입력
-            players.push_back(newPlayers[j]); // 초청 선수 추가
-        }
+    for (int query = 0; query < Q; query) {
+        int k, newPlayer;
+        cin >> k >> newPlayer;
 
-        // 선수 정렬
+        // 새 선수 추가
+        players.push_back(newPlayer);
         sort(players.begin(), players.end());
 
+        // 최소 불균형 계산
+        long long result = calculateMinImbalance(players);
+        cout << result << "\n";
 
-        cout<<"0";
-        for(int j = 0; j < N+1; j++)
-        {
-            cout<<"????"<<N<<endl;
-            connectNode(j, N+1);
-        }
-        // 정렬된 선수 출력 (디버깅용)
-        cout << "After Training " << i + 1 << ":\n";
-        cout << "Sorted Players: ";
-        for (int p : players)
-        {
-            cout << p << " ";
-        }
-        cout << "\n";
-
-        for (int p = 0; p < N + 1; p++)
-        {
-            cout << result[p][0] << ":" << result[p][1] << " " << "\n";
-        }
-
-        // 초청 선수 복원 작업 (다음 회차를 위해 제거)
-        for (int j = 0; j < k; ++j)
-        {
-            players.pop_back();
-        }
+        // 새 선수 제거
+        players.pop_back();
     }
 
     return 0;
